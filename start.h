@@ -1,7 +1,7 @@
 #include "DxLib.h"
 #include "define.h"
 
-extern int gl;
+extern int goalNum;
 extern int GHandle[12];
 extern int mx , my;
 extern int RestartH , SettingH , QuitH , BackH;	//ボタン画像ハンドル

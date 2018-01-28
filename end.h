@@ -1,6 +1,6 @@
 #include "DxLib.h"
 
-extern int gl;
+extern int goalNum;
 extern int GHandle[12];
 extern int board[16];
 extern int GameFlag;

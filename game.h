@@ -1,7 +1,7 @@
 #include "DxLib.h"
 #include "define.h"
 
-extern int gl;
+extern int goalNum;
 extern int GHandle[12];
 extern int GameFlag;
 extern int mx , my;
@@ -21,7 +21,7 @@ private:
 	char keybuf[256];
 	int count;		//手数
 	int score;		//点数
-	int gl;			//目標値
+	int goalNum;			//目標値
 	int mx,my;		//マウス座標
 
 private:

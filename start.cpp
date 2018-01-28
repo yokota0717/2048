@@ -58,16 +58,25 @@ void START::Button()
 	// QUITが押されるかENTER入力されるまで待つ
 	while( CheckHitKey( KEY_INPUT_RETURN ) == 0 && quit == 0 )
     {
-		GetMousePoint( &mx , &my );
-		if( ( GetMouseInput() && MOUSE_INPUT_LEFT ) != 0 ){
-			if( mx>10 && my>380 && mx<110 && my<430 ){
-				quit = 1;		// QUITボタン上でクリックされたらリセットフラグを立てる
-			}else if( mx>10 && my>325 && mx<110 && my<375 ){
-				setting = 1;	// SETTINGボタン上でクリックされたらリセットフラグを立てる
-			}else if( mx>10 && my>270 && mx<110 && my<320 ){
-				restart = 1;	// RESTARTボタン上でクリックされたらリセットフラグを立てる
-			}
+		if (CheckHitKey(KEY_INPUT_Q) != 0) {
+			quit = 1;
 		}
+		else if (CheckHitKey(KEY_INPUT_S) != 0) {
+			setting = 1;
+		}
+		else if (CheckHitKey(KEY_INPUT_R) != 0) {
+			restart = 1;
+		}
+		//GetMousePoint( &mx , &my );
+		//if( ( GetMouseInput() && MOUSE_INPUT_LEFT ) != 0 ){
+		//	if( mx>10 && my>380 && mx<110 && my<430 ){
+		//		quit = 1;		// QUITボタン上でクリックされたらリセットフラグを立てる
+		//	}else if( mx>10 && my>325 && mx<110 && my<375 ){
+		//		setting = 1;	// SETTINGボタン上でクリックされたらリセットフラグを立てる
+		//	}else if( mx>10 && my>270 && mx<110 && my<320 ){
+		//		restart = 1;	// RESTARTボタン上でクリックされたらリセットフラグを立てる
+		//	}
+		//}
 
         // メッセージ処理
         if( ProcessMessage() == -1 )

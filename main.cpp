@@ -2,7 +2,7 @@
 #include "game.h"
 #include "end.h"
 
-int gl;
+int goalNum;		//目標数字
 int GHandle[12];
 int white;
 int GameFlag;		//-1 : 勝ち  0 : ゲーム続行  その他 : 負け
@@ -43,7 +43,7 @@ MAIN:
 		if( quit == 1 ){			// quitが押されたら画面閉じる
 			quit = 0;
 
-			while( GetMouseInput() && MOUSE_INPUT_LEFT  != 0 ){	//長押ししている間は次に進まない。
+			while(( GetMouseInput() & MOUSE_INPUT_LEFT)  != 0 ){	//長押ししている間は次に進まない。
 				// メッセージ処理
 				if( ProcessMessage() == -1 )
 				{
@@ -58,7 +58,7 @@ MAIN:
 			restart = 0;
 			delete game;
 
-			while( GetMouseInput() && MOUSE_INPUT_LEFT  != 0 ){	//長押ししている間は次に進まない。
+			while(( GetMouseInput() & MOUSE_INPUT_LEFT)  != 0 ){	//長押ししている間は次に進まない。
 				// メッセージ処理
 				if( ProcessMessage() == -1 )
 				{

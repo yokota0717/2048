@@ -12,11 +12,12 @@ GAME::GAME()
 	count = 0;
 	score = 0;
 
-	gl = 1;
+	goalNum = 1;
 	for( int i=1 ; i<=GOAL ; i++){
-		gl *= 2;
+		goalNum *= 2;
 	}
 
+	//最初のボードの位置を算出
 	for(int i=0 ; i<(NL*NL) ; i++){
 		board[i].x = SET_X+DIST*(i%NL);
 		board[i].y = SET_Y+DIST*(i/NL);
@@ -24,10 +25,12 @@ GAME::GAME()
 		board[i].r = 0;
 	}
 	
+	//初期配置
 	int rnd = GetRand(15);
 	board[rnd].x = SET_X+DIST*( rnd%NL );
 	board[rnd].y = SET_Y+DIST*( rnd/NL );
 	board[rnd].num = 1;
+	//初期配置でマスが被らないように
 	do{
 		 rnd = GetRand(15);
 	}while( board[rnd].num != 0 );
@@ -38,7 +41,7 @@ GAME::GAME()
 	
 	//ゲーム開始時の画面
 	SetFontSize( 50 ) ;
-	DrawFormatString( 10 , 40 , GetColor( 255 , 255 , 255 ) , "%d" , gl );
+	DrawFormatString( 10 , 40 , GetColor( 255 , 255 , 255 ) , "%d" , goalNum );
 	DrawFormatString( 10 , 88 , GetColor( 225 , 225 , 0 ) , "%d" , score );
 	DrawFormatString( 520 , 400 , GetColor( 255 , 255 , 255 ) , "%d" , count );
 	
@@ -98,20 +101,20 @@ void GAME::Move()
 					board[ NL*i+j ].r = j-k;
 					k++;
 					
-					if( board[ NL*i+j ].r != 0 )
-						motion = 1;
+					if( board[ NL*i+j ].r != 0 )	//移動マスが0でなければ
+						motion = 1;					//移動するよ
 				}
 			}
 		}
 
 		//移動アニメーション
 		if( motion != 0 ){
-			for( int m=0 ; m<10 ; m++){
+			for( int m=0 ; m<10 ; m++){		//アニメーションコマ送りのコマ数
 				ClearDrawScreen();				//コマを消し、
 				for( int k=0 ; k<(NL*NL) ; k++){		//タイトルと空マスとスコアと手数を書く
 					DrawRotaGraph( board[k].x , board[k].y , EXP , 0.0 , GHandle[0] , TRUE );				
 				}
-				DrawFormatString( 10 , 40 , GetColor( 255 , 255 , 255 ) , "%d" , gl );
+				DrawFormatString( 10 , 40 , GetColor( 255 , 255 , 255 ) , "%d" , goalNum );
 				DrawFormatString( 10 , 88 , GetColor( 225 , 225 , 0 ) , "%d" , score );
 				DrawFormatString( 520 , 400 , GetColor( 255 , 255 , 255 ) , "%d" , count );
 
@@ -124,7 +127,7 @@ void GAME::Move()
 				DrawString( 10 , 380 , "Q" , GetColor(200,0,200) );
 				
 
-				//コマ配置
+				//コマ配置アニメーション
 				for( int i=0 ; i<(NL*NL) ; i++){
 					if( board[i].num != 0 ){
 						DrawRotaGraph( board[i].x - (DIST/10)*(board[i].r)*m , board[i].y , EXP , 0.0 , GHandle[ board[i].num ] , TRUE );
@@ -134,20 +137,6 @@ void GAME::Move()
 		//		WaitTimer(10);
 			}
 		}
-
-		//マスnum更新
-		for( int i=0 ; i<NL ; i++){
-			for( int a=(NL-1) ; a>0 ; a--){
-				for( int j=0 ; j<a ; j++){
-					if( board[ NL*i+j ].num == 0 ){
-						buf = board[ NL*i+j ].num;
-						board[ NL*i+j ].num = board [ NL*i+j+1 ].num;
-						board[ NL*i+j+1 ].num = buf;				
-					}
-				}
-			}
-		}
-
 		for( int i=0 ; i<NL ; i++){
 			//同じ値が連続してたら左側に集約
 			for( int j=0 ; j<(NL-1) ; j++){
@@ -165,6 +154,20 @@ void GAME::Move()
 					score += buf;
 				}
 			}
+
+		//マスnum更新
+		for( int i=0 ; i<NL ; i++){
+			for( int a=(NL-1) ; a>0 ; a--){
+				for( int j=0 ; j<a ; j++){
+					if( board[ NL*i+j ].num == 0 ){
+						buf = board[ NL*i+j ].num;
+						board[ NL*i+j ].num = board [ NL*i+j+1 ].num;
+						board[ NL*i+j+1 ].num = buf;				
+					}
+				}
+			}
+		}
+
 
 			//再度並べ替え
 			for( int a=(NL-1) ; a>0 ; a--){
@@ -203,7 +206,7 @@ void GAME::Move()
 				for( int k=0 ; k<(NL*NL) ; k++){		//タイトルと空マスとスコアと手数を書く
 					DrawRotaGraph( board[k].x , board[k].y , EXP , 0.0 , GHandle[0] , TRUE );
 				}
-				DrawFormatString( 10 , 40 , GetColor( 255 , 255 , 255 ) , "%d" , gl );
+				DrawFormatString( 10 , 40 , GetColor( 255 , 255 , 255 ) , "%d" , goalNum );
 				DrawFormatString( 10 , 88 , GetColor( 225 , 225 , 0 ) , "%d" , score );
 				DrawFormatString( 520 , 400 , GetColor( 255 , 255 , 255 ) , "%d" , count );
 
@@ -294,7 +297,7 @@ void GAME::Move()
 				for( int k=0 ; k<(NL*NL) ; k++){		//タイトルと空マスとスコアと手数を書く
 					DrawRotaGraph( board[k].x , board[k].y , EXP , 0.0 , GHandle[0] , TRUE );
 				}
-				DrawFormatString( 10 , 40 , GetColor( 255 , 255 , 255 ) , "%d" , gl );
+				DrawFormatString( 10 , 40 , GetColor( 255 , 255 , 255 ) , "%d" , goalNum );
 				DrawFormatString( 10 , 88 , GetColor( 225 , 225 , 0 ) , "%d" , score );
 				DrawFormatString( 520 , 400 , GetColor( 255 , 255 , 255 ) , "%d" , count );
 
@@ -385,7 +388,7 @@ void GAME::Move()
 				for( int k=0 ; k<(NL*NL) ; k++){		//タイトルと空マスとスコアと手数を書く
 					DrawRotaGraph( board[k].x , board[k].y , EXP , 0.0 , GHandle[0] , TRUE );
 				}
-				DrawFormatString( 10 , 40 , GetColor( 255 , 255 , 255 ) , "%d" , gl );
+				DrawFormatString( 10 , 40 , GetColor( 255 , 255 , 255 ) , "%d" , goalNum );
 				DrawFormatString( 10 , 88 , GetColor( 225 , 225 , 0 ) , "%d" , score );
 				DrawFormatString( 520 , 400 , GetColor( 255 , 255 , 255 ) , "%d" , count );
 				
@@ -481,7 +484,7 @@ void GAME::Move()
 			break;
 		}
 
-		//空きマスがあれば0、なければ正の数
+		//空きマスがあれば0、なければ正の数(空きマスは０、それをかけるからGameFlagが0、ゲーム続行)
 		GameFlag *= board[i].num;
 
 		//下・左に同じ数が繋がっている場合はゲーム続行
@@ -527,7 +530,7 @@ void GAME::Button()
 void GAME::Draw()
 {
 	ClearDrawScreen();
-	DrawFormatString( 10 , 40 , GetColor( 255 , 255 , 255 ) , "%d" , gl );
+	DrawFormatString( 10 , 40 , GetColor( 255 , 255 , 255 ) , "%d" , goalNum );
 	DrawFormatString( 10 , 88 , GetColor( 225 , 225 , 0 ) , "%d" , score );
 	DrawFormatString( 520 , 400 , GetColor( 255 , 255 , 255 ) , "%d" , count );
 	
