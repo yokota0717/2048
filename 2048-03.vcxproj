@@ -83,16 +83,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="end.cpp" />
-    <ClCompile Include="game.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="start.cpp" />
+    <ClCompile Include="include\Input\keyboard.cpp" />
+    <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="define.h" />
-    <ClInclude Include="end.h" />
-    <ClInclude Include="game.h" />
-    <ClInclude Include="start.h" />
+    <ClInclude Include="include\define.h" />
+    <ClInclude Include="include\Object\Object.h" />
+    <ClInclude Include="include\Scene\Scene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
