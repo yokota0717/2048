@@ -1,6 +1,6 @@
 #include "DxLib.h"
 #include "../include/Object/Object.h"
-#include "../include/Scene/Scene.h"
+#include "../include/BaseClass/BaseClass.h"
 #include "../include/Input/keyboard.h"
 #include <vector>
 
@@ -52,7 +52,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	end->pauseAll();
 
 	root->insertAsChild(title);
-	
+	root->insertAsChild(game);
+	root->insertAsChild(end);
 
 
 	while (ProcessLoop() == 0) {

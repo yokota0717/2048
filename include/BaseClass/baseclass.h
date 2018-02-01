@@ -1,4 +1,5 @@
 #pragma once
+#include "DxLib.h"
 #include "../../include/Object/Object.h"
 #include "../../include/define.h"
 
@@ -24,9 +25,6 @@ private:
 
 	void render() {				//通常描画処理
 	}
-	void renderPause() { render(); }	//ポーズ中の処理
-	void renderSleep() { render(); }	//スリープ中の処理
-	void renderDestroy() {}				//削除予約中の処理
 };
 
 class Block :public Object {
@@ -52,9 +50,19 @@ private:
 	}
 
 	void render() {				//通常描画処理
+
 	}
 	void renderPause() { render(); }	//ポーズ中の処理
 	void renderSleep() { render(); }	//スリープ中の処理
 	void renderDestroy() {}				//削除予約中の処理
 
+};
+
+class UI :public Object {
+public:
+	UI():
+		Object("UI")
+	{}
+
+private:
 };
