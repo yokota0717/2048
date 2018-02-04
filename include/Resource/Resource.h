@@ -6,17 +6,18 @@
 using namespace std;
 
 
-class Graph {
-	int handle;
-
-	Graph(int);
-};
+//class Graph {
+//	int handle;
+//
+//public:
+//	Graph(int);
+//};
 
 class GraphFactory {
-	map<string, shared_ptr<Graph>> pool;
+	map<string, int> pool;
 
-	shared_ptr<Graph> CreateGraph(string);
+	int CreateGraph(string);
 
 public:
-	shared_ptr<Graph> GetGraph(string);
+	int GetGraph(string);
 };

@@ -2789,8 +2789,8 @@ extern	int			SetFogMode(							int Mode /* DX_FOGMODE_NONE 等 */ ) ;							// フ
 extern	int			GetFogMode(							void ) ;														// フォグモードを取得する
 extern	int			SetFogColor(						int  r, int  g, int  b ) ;										// フォグカラーを設定する
 extern	int			GetFogColor(						int *r, int *g, int *b ) ;										// フォグカラーを取得する
-extern	int			SetFogStartEnd(						float  start, float  end ) ;									// フォグが始まる距離と終了する距離を設定する( 0.0f ～ 1.0f )
-extern	int			GetFogStartEnd(						float *start, float *end ) ;									// フォグが始まる距離と終了する距離を取得する( 0.0f ～ 1.0f )
+extern	int			SetFogStartEnd(						float  start, float  ending ) ;									// フォグが始まる距離と終了する距離を設定する( 0.0f ～ 1.0f )
+extern	int			GetFogStartEnd(						float *start, float *ending ) ;									// フォグが始まる距離と終了する距離を取得する( 0.0f ～ 1.0f )
 extern	int			SetFogDensity(						float density ) ;												// フォグの密度を設定する( 0.0f ～ 1.0f )
 extern	float		GetFogDensity(						void ) ;														// フォグの密度を取得する( 0.0f ～ 1.0f )
 

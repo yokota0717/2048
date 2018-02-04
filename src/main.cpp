@@ -1,6 +1,7 @@
 #include "DxLib.h"
 #include "../include/Object/Object.h"
 #include "../include/BaseClass/BaseClass.h"
+#include "../include/Resource/Resource.h"
 #include "../include/Input/keyboard.h"
 #include <vector>
 
@@ -12,6 +13,20 @@ int mx, my;		//マウスポインタ位置
 int RestartH, SettingH, QuitH, BackH;	//ボタン画像ハンドル
 bool restart, setting, quit;			//各ボタンが押されたかどうか
 
+
+
+Object* root = new Object("Root");
+Object* title = new Scene("../resource/graph/0.png");
+Object* game = new Scene("./resource/graph/scene2.jpg");
+Object* ending = new Scene("./resource/graph/0.png");
+
+//ブロック生成
+Object* block = new Block(0, 0, 0);
+//const int totalBlockNum = LINE_NUM*LINE_NUM;
+//Object* blocks[totalBlockNum] = { new Block(0,0,0) };
+
+
+Score* score = new Score();
 
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -37,23 +52,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);	//画面サイズ変更
 	ChangeWindowMode(TRUE), SetWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK); //ウィンドウモード変更と初期化と裏画面設定
 
-	Object* root = new Object("Root");
-	Object* title = new Scene();
-	Object* game = new Scene();
-	Object* end = new Scene();
-
-	int totalBlockNum = LINE_NUM*LINE_NUM;
-	std::vector<Object*> block(totalBlockNum, 0);
 
 
 
-
+	//gameとendはとりあえず停止
 	game->pauseAll();
-	end->pauseAll();
+	ending->pauseAll();
 
+	//title,game,endをrootの子に設定
 	root->insertAsChild(title);
 	root->insertAsChild(game);
-	root->insertAsChild(end);
+	root->insertAsChild(ending);
 
 
 	while (ProcessLoop() == 0) {
@@ -62,7 +71,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		root->updateWithChildren();
 		root->renderWithChildren();
 
-		
+		block->render();
 
 		if (Keyboard_Get(KEY_INPUT_ESCAPE) == 1) break;  //Escキーが押されたら終了
 	}

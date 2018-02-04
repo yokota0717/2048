@@ -83,13 +83,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="game.cpp" />
     <ClCompile Include="include\Input\keyboard.cpp" />
+    <ClCompile Include="include\Resource\Resource.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\BaseClass\baseclass.h" />
     <ClInclude Include="include\define.h" />
     <ClInclude Include="include\Object\Object.h" />
+    <ClInclude Include="include\Resource\Resource.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
