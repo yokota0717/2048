@@ -13,11 +13,20 @@ using namespace std;
 //	Graph(int);
 //};
 
+//class GraphFactory {
+//	map<string, int> pool;
+//
+//	int CreateGraph(string);
+//
+//public:
+//	int GetGraph(string);
+//};
+
 class GraphFactory {
 	map<string, int> pool;
 
-	int CreateGraph(string);
+	int CreateGraph(const char*);
 
 public:
-	int GetGraph(string);
+	int GetGraph(const char*);
 };

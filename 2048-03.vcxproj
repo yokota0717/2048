@@ -83,13 +83,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="game.cpp" />
+    <ClCompile Include="include\BaseClass\baseclass.cpp" />
+    <ClCompile Include="include\Behavior\Behavior.cpp" />
     <ClCompile Include="include\Input\keyboard.cpp" />
     <ClCompile Include="include\Resource\Resource.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\BaseClass\baseclass.h" />
+    <ClInclude Include="include\Behavior\Behavior.h" />
     <ClInclude Include="include\define.h" />
     <ClInclude Include="include\Object\Object.h" />
     <ClInclude Include="include\Resource\Resource.h" />

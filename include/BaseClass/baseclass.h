@@ -3,134 +3,151 @@
 #include "../Object/Object.h"
 #include "../define.h"
 #include "../Figure/Vec.h"
+#include "../Figure/Shape.h"
 #include "../Resource/Resource.h"
-
-namespace {
-	GraphFactory* graFac = new GraphFactory();
-}
-
-
-class Scene :public Object {
-public:
-	Scene(string fileName):
-		Object("Scene")
-	{
-		bgHandle = graFac->GetGraph("./resource/graph/0.png");
-	}
-	~Scene() {
-		DeleteGraph(bgHandle);
-	}
-
-private:
-	int bgHandle;				//背景画像ハンドル　多分使わない
-
-	void update() {
-		
-	}			
-	void updatePause() {}		
-	void updateSleep() {}		
-	void updateDestroy() {}		
-
-	void render() {
-		DrawGraphF(0, 0, bgHandle, false);
-	}				
-};
-
-class Block :public Object {
-public:
-	Block(int num, float x, float y) :
-		Object("Block"),
-		picHandle(0),
-		num(num),
-		pos(Vec(x, y))
-	{}
-	~Block() {
-		DeleteGraph(picHandle);
-	}
-	void setPos(float x, float y) {
-		pos.x = x;
-		pos.y = y;
-	}
-	
+#include "../Input/keyboard.h"
+#include "../Behavior/Behavior.h"
+#include <random>
 
 
-private:
-	int picHandle;
-	int num;			//2^n の n
-	Vec pos;
-
-	void update() {}				//通常処理
-	void updatePause() {		//ポーズ中の処理
-	}
-	void updateSleep() {		//スリープ中の処理
-	}
-	void updateDestroy() {		//削除予約中の処理
-	}
-
-	void render() {				//通常描画処理
-		switch (num) {
-		case 0:
-		default:
-			picHandle = graFac->GetGraph("./resource/graph/0.png");
-			break;
-		case 1:
-			picHandle = graFac->GetGraph("./resource/graph/2.png");
-			break;
-		case 2:
-			picHandle = graFac->GetGraph("./resource/graph/4.png");
-			break;
-		case 3:
-			picHandle = graFac->GetGraph("./resource/graph/8.png");
-			break;
-		case 4:
-			picHandle = graFac->GetGraph("./resource/graph/16.png");
-			break;
-		case 5:
-			picHandle = graFac->GetGraph("./resource/graph/32.png");
-			break;
-		case 6:
-			picHandle = graFac->GetGraph("./resource/graph/64.png");
-			break;
-		case 7:
-			picHandle = graFac->GetGraph("./resource/graph/128.png");
-			break;
-		case 8:
-			picHandle = graFac->GetGraph("./resource/graph/256.png");
-			break;
-		case 9:
-			picHandle = graFac->GetGraph("./resource/graph/512.png");
-			break;
-		case 10:
-			picHandle = graFac->GetGraph("./resource/graph/1024.png");
-			break;
-		case 11:
-			picHandle = graFac->GetGraph("./resource/graph/2048.png");
-			break;
-		};
-		DrawRotaGraph2F(pos.x, pos.y, 0, 0, EXP, 0.0, picHandle, false);
-	}
-};
-
-class UI :public Object {
-public:
-	UI():
-		Object("UI")
-	{}
-
-private:
-};
 
 class Score {
 public:
 	int score;
 
-	Score():
-		score(0)
-	{}
-	int getScore() {
-		return score;
-	}
-	void calcScore(int s) {
-		score += s;
-	}
+	Score();
+	int getScore();
+	void calcScore(int s);
 };
+
+
+class Random {
+public:
+	Random();
+	int getIntRand(int, int);
+
+private:
+	std::random_device rd;
+	std::mt19937 mt;
+};
+
+
+class Counter {
+public:
+	int cnt;
+	Counter();
+	void count();
+	int getCount();
+};
+
+
+class InputChecker {
+public:
+	InputChecker();
+	int inputCheck();
+
+private:
+	enum KeyValue {
+		left	= 1 << 0 ,
+		right	= 1 << 1,
+		up		= 1<< 2,
+		down	= 1 << 3,
+	};
+	int key;
+};
+
+class Text {
+public:
+	Vec pos;							//左上の座標
+
+	Text();
+	Text(float, float);
+
+	void setText(const char*);
+	void addText(string&);
+	void setFontSize(int);
+	void setPos(float, float);
+	void draw();
+
+private:
+	string text;
+	int fontSize;
+};
+
+
+class Block :public Object {
+public:
+	Vec pos;
+	int num;			//2^n の n
+	int moveNum;
+	Easing* ease;
+
+	Block(int, float, float, int);
+	~Block();
+	void setPos(float, float);
+	void setHandle(const char* fn);
+
+
+
+private:
+	int picHandle;
+	int id;				//要らんかも
+
+	//void MoveCheck(int);
+	//void Move();
+
+	void update();				//通常処理
+	void updatePause();			//ポーズ中の処理
+	void updateSleep();			//スリープ中の処理
+	void updateDestroy();		//削除予約中の処理
+
+	void render();					//通常描画処理
+	void renderPause();		//ポーズ中の処理
+	void renderSleep();		//スリープ中の処理
+	void renderDestroy();	//削除予約中の処理
+
+};
+
+
+class BlockMng:public Object {
+public:
+	BlockMng();
+	void init();
+	void MoveCheck(int);
+	void update();				//通常処理
+	void updatePause();			//ポーズ中の処理
+	void updateSleep();			//スリープ中の処理
+	void updateDestroy();		//削除予約中の処理
+
+	Random* random;
+	Block* blocks[LINE_NUM*LINE_NUM];
+
+private:
+};
+
+
+//★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+//ゲーム全体を管理するクラス
+//追加するオブジェクトはとりあえずここに持たせようそうしよう
+//★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+class GameEngine {
+public:
+	GameEngine();
+	GraphFactory* graFac;
+	Object* root;
+	Score* score;
+	Counter* counter;
+	InputChecker* ichecker;
+	Text* start;
+	Text* clear;
+	Text* scr;
+	Text* cnt;
+
+	BlockMng* blockMng;
+	Block* titles[4];
+
+
+	void init();
+	int doAll();
+};
+extern GameEngine* ge;
