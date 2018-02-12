@@ -7,26 +7,36 @@ GameEngine::GameEngine() :
 	graFac(new GraphFactory()),
 	root(new Object("Root")),
 	score(new Score()),
-	counter(new Counter()),
+	frameCounter(new Counter()),
+	moveCounter(new Counter(1)),
 	ichecker(new InputChecker()),
 	start(new Text(SCREEN_WIDTH / 2 - 170, SCREEN_HEIGHT / 2 + 50)),
 	clear(new Text(800 / 3, 600 / 2)),
 	scr(new Text(100, 100)),
 	cnt(new Text(100, 150)),
+	flag(new Flag()),
 	blockMng(new BlockMng())
 {
-	titles[0] = new Block(1, 160, -100, -1);
-	titles[1] = new Block(-1, 160 + 120, -100, -1);
+	titles[0] = new Block(-1);
+	titles[0]->init(1, 160, -100);
+	titles[1] = new Block(-1);
+	titles[1]->init(-1, 160 + 120, -100);
 	root->insertAsChild(titles[0]);
 	root->insertAsChild(titles[1]);
 	for (int i = 2; i < 4; ++i) {
-		titles[i] = new Block(i, float(160 + 120 * i), -100, -1);
+		titles[i] = new Block(-1);
+		titles[i]->init(i, float(160 + 120 * i), -100);
 		root->insertAsChild(titles[i]);
 	}
 	root->insertAsChildPause(blockMng);
+
+	flag->setFlag("title", true);
+	flag->setFlag("game", false);
+	flag->setFlag("clear", false);
+	flag->setFlag("over", false);
 }
 void GameEngine::init() {
-	blockMng->init();
+	//blockMng->init();
 
 	start->setFontSize(60);
 	start->setText("PRESS ENTER");
@@ -34,22 +44,107 @@ void GameEngine::init() {
 }
 int GameEngine::doAll() {
 	Keyboard_Update();
-	counter->count();
+	frameCounter->countFrame();
 
 	ge->root->updateWithChildren();
 	ge->root->renderWithChildren();
 
-	if (counter->getCount() >= 180) {
-		start->draw();
+
+
+	//これはひどい
+	//せっかく上の二行で済むものをどうしてこうなった
+	//明確なシーン移行と考えられる部分は纏めるべし。
+	if (flag->getFlag("title")) {
+		for (int i = 0; i < 4; ++i) {
+			titles[i]->run();
+		}
+		titles[0]->ease->fallFlag = true;
+		for (int i = 0; i < 4; ++i) {
+			if (frameCounter->getFrame() >= (15 * i) && titles[i - 1]->ease->fallFlag) {
+				titles[i]->ease->fallFlag = true;
+			}
+		}
+		if (frameCounter->getFrame() >= 120) {
+			start->draw();
+			if (Keyboard_Get(KEY_INPUT_RETURN) == 1) {
+				titles[0]->init(1, 160, -100);
+				titles[0]->pause();
+				titles[0]->ease->reset();
+				titles[1]->init(-1, 160 + 120, -100);
+				titles[1]->ease->reset();
+				titles[1]->pause();
+				for (int i = 2; i < 4; ++i) {
+					titles[i]->init(i, float(160 + 120 * i), -100);
+					titles[i]->ease->reset();
+					titles[i]->pause();
+				}
+				blockMng->run();
+				blockMng->initBlocks();
+				flag->setFlag("title", false);
+				flag->setFlag("game", true);
+			}
+		}
 	}
-	titles[0]->ease->fallFlag = true;
-	for (int i = 0; i < 4; ++i) {
-		if (counter->getCount() >= (15 * i) && titles[i - 1]->ease->fallFlag) {
-			titles[i]->ease->fallFlag = true;
+	else if (flag->getFlag("game")) {
+		for (int i = 0; i < LINE_NUM*LINE_NUM; ++i) {
+			blockMng->blocks[i]->run();
+		}
+		
+		SetFontSize(25);
+		DrawFormatString(20, 570, white, "Back to Title : Press BackSpace");
+		SetFontSize(40);
+		DrawFormatString(20, 50, yellow, "SCORE :\n  %010d", score->getScore());
+		DrawFormatString(20, 150, green, "MOVE  : %4d", moveCounter->getCount());
+
+		if (Keyboard_Get(KEY_INPUT_BACK) == 1) {
+			flag->setFlag("game", false);
+			flag->setFlag("title", true);
+			frameCounter->frame = 0;
+			score->score = 0;
+			moveCounter->cnt = 0;
+			for (int i = 0; i < LINE_NUM*LINE_NUM; ++i) {
+				blockMng->blocks[i]->init(0, SET_X + DIST*(i%LINE_NUM), SET_Y + DIST*(i / LINE_NUM));
+				blockMng->blocks[i]->pause();
+			}
+			blockMng->pause();
+		}
+		if (flag->getFlag("clear")) {
+			SetFontSize(80);
+			DrawFormatString(70, SCREEN_HEIGHT / 2 - 30, red, "Congratulations!");
+			if (Keyboard_Get(KEY_INPUT_RETURN) == 1) {
+				flag->setFlag("game", false);
+				flag->setFlag("title", true);
+				flag->setFlag("clear", false);
+				frameCounter->frame = 0;
+				score->score = 0;
+				moveCounter->cnt = 0;
+				for (int i = 0; i < LINE_NUM*LINE_NUM; ++i) {
+					blockMng->blocks[i]->init(0, SET_X + DIST*(i%LINE_NUM), SET_Y + DIST*(i / LINE_NUM));
+					blockMng->blocks[i]->pause();
+				}
+				blockMng->pause();
+			}
+		}
+		if (flag->getFlag("over")) {
+			SetFontSize(100);
+			DrawFormatString(130, SCREEN_HEIGHT / 2 - 30, blue, "You Lose...");
+			if (Keyboard_Get(KEY_INPUT_RETURN) == 1) {
+				flag->setFlag("game", false);
+				flag->setFlag("title", true);
+				flag->setFlag("clear", true);
+				frameCounter->frame = 0;
+				score->score = 0;
+				moveCounter->cnt = 0;
+				for (int i = 0; i < LINE_NUM*LINE_NUM; ++i) {
+					blockMng->blocks[i]->init(0, SET_X + DIST*(i%LINE_NUM), SET_Y + DIST*(i / LINE_NUM));
+					blockMng->blocks[i]->pause();
+				}
+				blockMng->pause();
+			}
 		}
 	}
 
-	if (Keyboard_Get(KEY_INPUT_ESCAPE) == 1) return -1;  //Escキーが押されたら終了
+	if (Keyboard_Get(KEY_INPUT_ESCAPE) == 1) return -1;  //Escキーが押されたら終了(するはずがなぜか効かない、要改善)
 	return 0;
 }
 GameEngine* ge;
@@ -81,10 +176,22 @@ int Random::getIntRand(int min, int max) {
 
 //-------------------------------------------------------------------------------------------------------------------
 Counter::Counter() :
+	frame(0),
 	cnt(0)
 {}
-void Counter::count() {
-	cnt++;
+Counter::Counter(int add):
+	frame(0),
+	cnt(0),
+	addValue(add)
+{}
+void Counter::countFrame() {
+	frame++;
+}
+int Counter::getFrame() {
+	return frame;
+}
+void Counter::countValue() {
+	cnt += addValue;
 }
 int Counter::getCount() {
 	return cnt;
@@ -146,18 +253,42 @@ void Text::draw() {
 
 //-------------------------------------------------------------------------------------------------------------------
 
+
 //-------------------------------------------------------------------------------------------------------------------
-Block::Block(int num, float x, float y, int id) :
+Flag::Flag() {}
+void Flag::setFlag(string name, bool b) {
+	auto it = flags.find(name);
+	if (it != flags.end()) {
+		it->second = b;
+	}
+	else {
+		flags.insert(make_pair(name, b));
+	}
+}
+bool Flag::getFlag(string name) {
+	auto it = flags.find(name);
+	if (it != flags.end()) {
+		return it->second;
+	}
+	return false;
+}
+//-------------------------------------------------------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------------------------------------------------------
+Block::Block(int id) :
 	Object("Block"),
 	picHandle(0),
-	num(num),
-	pos(Vec(x, y)),
 	moveNum(0),
 	ease(new Easing()),
 	id(id)	//要らんかも
 {}
 Block::~Block() {
 	picHandle = 0;
+}
+void Block::init(int n,float x,float y) {
+	num = n;
+	pos = Vec(x, y);
 }
 void Block::setPos(float x, float y) {
 	pos.x = x;
@@ -170,7 +301,7 @@ void Block::update() {
 	if (ID() == 19 || ID() == 20 || ID() == 21 || ID() == 22) {	//タイトル用ブロック
 		//t = 時間 b = 始点 c = 終点-始点 d = 経過時間
 		if (ease->fallFlag) {
-			pos.y = ease->BounceOut(ease->Time(5), -100, 200, 5.0f);
+			pos.y = ease->BounceOut(ease->Time(5), -100, 300, 5.0f);
 		}
 	}
 }
@@ -232,9 +363,12 @@ BlockMng::BlockMng() :
 	random(new Random())
 {
 	for (int i = 0; i < LINE_NUM*LINE_NUM; ++i) {
-		blocks[i] = new Block(0, SET_X + DIST*(i%LINE_NUM), SET_Y + DIST*(i / LINE_NUM), i);
+		blocks[i] = new Block(i);
+		blocks[i]->init(0, SET_X + DIST*(i%LINE_NUM), SET_Y + DIST*(i / LINE_NUM));
 		insertAsChildPause(blocks[i]);
 	}
+}
+void BlockMng::initBlocks() {
 	int rand = random->getIntRand(0, 15);
 	//1つ目の初期ブロックの位置を決定、値は2
 	blocks[rand]->pos.x = SET_X + DIST*(rand%LINE_NUM);
@@ -248,13 +382,14 @@ BlockMng::BlockMng() :
 	blocks[rand]->pos.y = SET_Y + DIST*(rand / LINE_NUM);
 	//2つ目のブロックの数字は9:1で2か4
 	blocks[rand]->num = (random->getIntRand(0, 9) < 9 ? 1 : 2);
-}
-void BlockMng::init() {
+
 }
 void BlockMng::MoveCheck(int arrow) {
 
 }
 void BlockMng::update() {
+	if (ge->flag->getFlag("clear") || ge->flag->getFlag("over")) { return; }
+
 	//入力キーのチェック
 	//方向に応じて移動
 	//移動先にブロックがあるか？
@@ -493,17 +628,27 @@ void BlockMng::update() {
 			}
 			break;
 		}
+
 	}
 	//motionがあればランダムにコマ１つ発生し、countを１増やす
-	if (motion == 1) {
+	if (motion != 0) {
 		do {
 			buf = random->getIntRand(0, (LINE_NUM*LINE_NUM) - 1);
 		} while (blocks[buf]->num != 0);
 		blocks[buf]->pos.x = SET_X + DIST*(buf%LINE_NUM);
 		blocks[buf]->pos.y = SET_Y + DIST*(buf / LINE_NUM);
 		blocks[buf]->num = (GetRand(9) < 9 ? 1 : 2);	// 2と4の出現率調整
-			//count++;		//手数＋１
+		ge->moveCounter->countValue();
 	}
+	if (ClearCheck() == -1) {	//clear
+		ge->flag->setFlag("clear", true);
+		//ge->flag->setFlag("game", false);
+	}
+	else if (ClearCheck() > 0) {	//ゲームオーバー
+		ge->flag->setFlag("over", true);
+		//ge->flag->setFlag("game", false);
+	}
+
 }
 
 void BlockMng::updatePause() {}
@@ -511,4 +656,37 @@ void BlockMng::updateSleep() {}
 void BlockMng::updateDestroy() {}
 
 
+/************************************/
+/* 引数                             */			
+/* 空マスが残ってたら GameFlag = 0   */
+/* 目標値まで行ったら GamdFlag = -1  */
+/* マスが埋まってたら GameFlag > 0   */
+/************************************/
+int BlockMng::ClearCheck() {
+	int GameFlag = 1;
+	for (int i = 0; i<(LINE_NUM*LINE_NUM); i++) {
+
+		//１つでも目標値ができたら成功フラグを立てる。目標値：define.h→"GOAL"
+		if (blocks[i]->num == GOAL) {
+			GameFlag = -1;
+			break;
+		}
+
+		//空きマスがあれば0、なければ正の数
+		GameFlag *= blocks[i]->num;
+
+		//下・左に同じ数が繋がっている場合はゲーム続行
+		if (i%LINE_NUM != 0) {
+			if (blocks[i]->num == blocks[i - 1]->num) {
+				GameFlag = 0;
+			}
+		}
+		if (i<LINE_NUM*(LINE_NUM - 1)) {
+			if (blocks[i]->num == blocks[i + LINE_NUM]->num) {
+				GameFlag = 0;
+			}
+		}
+	}
+	return GameFlag;
+}
 //-------------------------------------------------------------------------------------------------------------------

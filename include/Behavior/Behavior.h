@@ -45,6 +45,10 @@ public:
 		}
 		return cnt;
 	}
+	void reset() {
+		cnt = 0;
+		fallFlag = false;
+	}
 	//t = 時間 b = 始点 c = 終点-始点 d = 経過時間
 
 	//Linear

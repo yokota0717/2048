@@ -8,6 +8,7 @@
 #include "../Input/keyboard.h"
 #include "../Behavior/Behavior.h"
 #include <random>
+#include <map>
 
 
 
@@ -31,12 +32,20 @@ private:
 	std::mt19937 mt;
 };
 
-
+//経過フレームを管理するならupdateでcountFrame()を呼ぶ、取得はgetFrame()
+//条件に対してカウントするなら引数付きで指定、条件の中でcountValue()を呼ぶ、取得はgetCount()
 class Counter {
 public:
+	int frame;
 	int cnt;
+	int addValue;
+
 	Counter();
-	void count();
+	Counter(int);
+
+	void countFrame();
+	int getFrame();
+	void countValue();
 	int getCount();
 };
 
@@ -74,6 +83,15 @@ private:
 	int fontSize;
 };
 
+class Flag {
+public:
+	std::map<string, bool> flags;
+
+	Flag();
+	void setFlag(string, bool);
+	bool getFlag(string);
+};
+
 
 class Block :public Object {
 public:
@@ -82,8 +100,9 @@ public:
 	int moveNum;
 	Easing* ease;
 
-	Block(int, float, float, int);
+	Block(int);
 	~Block();
+	void init(int, float, float);
 	void setPos(float, float);
 	void setHandle(const char* fn);
 
@@ -112,12 +131,14 @@ private:
 class BlockMng:public Object {
 public:
 	BlockMng();
-	void init();
+	void initBlocks();
 	void MoveCheck(int);
 	void update();				//通常処理
 	void updatePause();			//ポーズ中の処理
 	void updateSleep();			//スリープ中の処理
 	void updateDestroy();		//削除予約中の処理
+	int ClearCheck();
+
 
 	Random* random;
 	Block* blocks[LINE_NUM*LINE_NUM];
@@ -136,12 +157,14 @@ public:
 	GraphFactory* graFac;
 	Object* root;
 	Score* score;
-	Counter* counter;
+	Counter* frameCounter;
+	Counter* moveCounter;
 	InputChecker* ichecker;
 	Text* start;
 	Text* clear;
 	Text* scr;
 	Text* cnt;
+	Flag* flag;
 
 	BlockMng* blockMng;
 	Block* titles[4];
