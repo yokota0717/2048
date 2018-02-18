@@ -32,6 +32,7 @@ private:
 	std::mt19937 mt;
 };
 
+
 //経過フレームを管理するならupdateでcountFrame()を呼ぶ、取得はgetFrame()
 //条件に対してカウントするなら引数付きで指定、条件の中でcountValue()を呼ぶ、取得はgetCount()
 class Counter {
@@ -57,13 +58,14 @@ public:
 
 private:
 	enum KeyValue {
-		left	= 1 << 0 ,
+		left	= 1 << 0,
 		right	= 1 << 1,
-		up		= 1<< 2,
+		up		= 1 << 2,
 		down	= 1 << 3,
 	};
 	int key;
 };
+
 
 class Text {
 public:
@@ -128,7 +130,7 @@ private:
 };
 
 
-class BlockMng:public Object {
+class BlockMng :public Object {
 public:
 	BlockMng();
 	void initBlocks();
@@ -145,32 +147,3 @@ public:
 
 private:
 };
-
-
-//★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-//ゲーム全体を管理するクラス
-//追加するオブジェクトはとりあえずここに持たせようそうしよう
-//★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-class GameEngine {
-public:
-	GameEngine();
-	GraphFactory* graFac;
-	Object* root;
-	Score* score;
-	Counter* frameCounter;
-	Counter* moveCounter;
-	InputChecker* ichecker;
-	Text* start;
-	Text* clear;
-	Text* scr;
-	Text* cnt;
-	Flag* flag;
-
-	BlockMng* blockMng;
-	Block* titles[4];
-
-
-	void init();
-	int doAll();
-};
-extern GameEngine* ge;

@@ -85,6 +85,7 @@
   <ItemGroup>
     <ClCompile Include="include\BaseClass\baseclass.cpp" />
     <ClCompile Include="include\Behavior\Behavior.cpp" />
+    <ClCompile Include="include\GameEngine\GameEngine.cpp" />
     <ClCompile Include="include\Input\keyboard.cpp" />
     <ClCompile Include="include\Resource\Resource.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -93,6 +94,7 @@
     <ClInclude Include="include\BaseClass\baseclass.h" />
     <ClInclude Include="include\Behavior\Behavior.h" />
     <ClInclude Include="include\define.h" />
+    <ClInclude Include="include\GameEngine\GameEngine.h" />
     <ClInclude Include="include\Object\Object.h" />
     <ClInclude Include="include\Resource\Resource.h" />
   </ItemGroup>
