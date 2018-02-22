@@ -2,27 +2,36 @@
 
 GameEngine::GameEngine() :
 	graFac(new GraphFactory()),
-	root(new Object("Root")),
 	score(new Score()),
 	frameCounter(new Counter()),
 	moveCounter(new Counter(1)),
 	ichecker(new InputChecker()),
 	start(new Text(SCREEN_WIDTH / 2 - 170, SCREEN_HEIGHT / 2 + 50)),
 	flag(new Flag()),
-	blockMng(new BlockMng())
+	blockMng(new BlockMng()),
+	root(new Object("Root")),
+	title(new Object("Title")),
+	game(new Object("Game")),
+	end(new Object("End"))
 {
-	titles[0] = new Block(-1);
+	//3つのシーンをrootの子に
+	root->insertAsChild(title);
+	root->insertAsChildPause(game);
+	root->insertAsChildPause(end);
+	//タイトルロゴ用ブロック
+	titles[0] = new Block();
 	titles[0]->init(1, 160, -100);
-	titles[1] = new Block(-1);
+	titles[1] = new Block();
 	titles[1]->init(-1, 160 + 120, -100);
-	root->insertAsChild(titles[0]);
-	root->insertAsChild(titles[1]);
+	title->insertAsChild(titles[0]);
+	title->insertAsChild(titles[1]);
 	for (int i = 2; i < 4; ++i) {
-		titles[i] = new Block(-1);
+		titles[i] = new Block();
 		titles[i]->init(i, float(160 + 120 * i), -100);
-		root->insertAsChild(titles[i]);
+		title->insertAsChild(titles[i]);
 	}
-	root->insertAsChildPause(blockMng);
+
+	game->insertAsChild(blockMng);
 
 	flag->setFlag("title", true);
 	flag->setFlag("game", false);

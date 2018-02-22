@@ -132,12 +132,11 @@ bool Flag::getFlag(string name) {
 
 
 //-------------------------------------------------------------------------------------------------------------------
-Block::Block(int id) :
+Block::Block() :
 	Object("Block"),
 	picHandle(0),
 	moveNum(0),
-	ease(new Easing()),
-	id(id)	//—v‚ç‚ñ‚©‚à
+	ease(new Easing())
 {}
 Block::~Block() {
 	picHandle = 0;
@@ -219,7 +218,7 @@ BlockMng::BlockMng() :
 	random(new Random())
 {
 	for (int i = 0; i < LINE_NUM*LINE_NUM; ++i) {
-		blocks[i] = new Block(i);
+		blocks[i] = new Block();
 		blocks[i]->init(0, SET_X + DIST*(i%LINE_NUM), SET_Y + DIST*(i / LINE_NUM));
 		insertAsChildPause(blocks[i]);
 	}

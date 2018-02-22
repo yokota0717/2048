@@ -20,6 +20,10 @@ public:
 	Block* titles[4];
 
 	Object* root;
+	//Œ‹‹ÇƒV[ƒ“‚©‚æ
+	Object* title;
+	Object* game;
+	Object* end;
 
 	void init();
 	void doAll();

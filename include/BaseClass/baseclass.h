@@ -102,7 +102,7 @@ public:
 	int moveNum;
 	Easing* ease;
 
-	Block(int);
+	Block();
 	~Block();
 	void init(int, float, float);
 	void setPos(float, float);
@@ -112,10 +112,6 @@ public:
 
 private:
 	int picHandle;
-	int id;				//要らんかも
-
-	//void MoveCheck(int);
-	//void Move();
 
 	void update();				//通常処理
 	void updatePause();			//ポーズ中の処理
